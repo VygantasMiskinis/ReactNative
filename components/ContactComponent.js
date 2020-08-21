@@ -7,15 +7,20 @@ function Contact (){
 return(
 
 <Card
-featuredTitle="Contact Information">
+title="Contact Information">
     <Text>     
-121, Clear Water Bay Road
-Clear Water Bay, Kowloon
+{`121, Clear Water Bay Road
+
+Clear Water Bay, Kowloon~
+
 HONG KONG
+
 Tel: +852 1234 5678
+
 Fax: +852 8765 4321
-Email:confusion@food.net
-    </Text>
+
+Email:confusion@food.net`}
+</Text>
 </Card>
 );
 
