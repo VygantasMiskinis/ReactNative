@@ -83,8 +83,7 @@ class Main extends Component {
  
     return (
         <NavigationContainer>
-            <MainNavigatorScreen/>
-                    
+            <MainNavigatorScreen/>          
         </NavigationContainer>
     );
   }
