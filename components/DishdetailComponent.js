@@ -25,9 +25,14 @@ function RenderDish(props) {
     const viewRef = useRef(null);
     const dish = props.dish;
 
-
     const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
         if ( dx < -200 )
+            return true;
+        else
+            return false;
+    }
+    const recognizeComment = ({ moveX, moveY, dx, dy }) => {
+        if ( dx > 200 )
             return true;
         else
             return false;
@@ -53,7 +58,9 @@ function RenderDish(props) {
                     ],
                     { cancelable: false }
                 );
-
+            else if (recognizeComment(gestureState))
+                    props.onToggle()
+                  
             return true;
         }
     })
@@ -167,7 +174,8 @@ class Dishdetail extends Component {
         const dishId = this.props.route.params.dishId;
         return(
             <ScrollView>
-                <RenderDish dish={this.props.dishes.dishes[+dishId]}
+                <RenderDish
+                 dish={this.props.dishes.dishes[+dishId]}
                     favorite={this.props.favorites.some(el => el === dishId)}
                     onPress={() => this.markFavorite(dishId)} 
                     onToggle= {() => this.toggleModal()}
