@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList } from 'react-native';
-import { Card, Icon } from 'react-native-elements';
+import { Text, View, ScrollView, FlatList, StyleSheet, Picker, Switch, Button, 
+    TouchableOpacity,Modal } from 'react-native';
+import {AirbnbRating,Rating} from 'react-native-ratings'
+import { Card, Icon ,Input} from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
-import { postFavorite } from '../redux/ActionCreators';
+import { postFavorite, postComment} from '../redux/ActionCreators';
 
 const mapStateToProps = state => {
     return {
@@ -13,9 +15,10 @@ const mapStateToProps = state => {
     }
   }
 
-const mapDispatchToProps = dispatch => ({
-    postFavorite: (dishId) => dispatch(postFavorite(dishId))
-})
+  const mapDispatchToProps = dispatch => ({
+    postFavorite: (dishId) => dispatch(postFavorite(dishId)),
+    postComment: (dishId, rating, comment, author) => dispatch(postComment(dishId, rating, comment, author))
+});
 
 function RenderDish(props) {
 
@@ -29,7 +32,8 @@ function RenderDish(props) {
                     <Text style={{margin: 10}}>
                         {dish.description}
                     </Text>
-                    <Icon
+                    <View style= {styles.rowContainer}>
+                    <Icon 
                     raised
                     reverse
                     name={ props.favorite ? 'heart' : 'heart-o'}
@@ -37,6 +41,15 @@ function RenderDish(props) {
                     color='#f50'
                     onPress={() => props.favorite ? console.log('Already favorite') : props.onPress()}
                     />
+                     <Icon 
+                    raised
+                    reverse
+                    name={'pencil'}
+                    type='font-awesome'
+                    color='#512DA8'
+                    onPress={() => props.onToggle()}
+                    />
+                    </View>
                 </Card>
             );
         }
@@ -73,11 +86,42 @@ function RenderComments(props) {
 
 class Dishdetail extends Component {
 
+    constructor(props){
+        super(props)
+        this.state={
+            rating:null,
+            author:'',
+            comment:'',
+            showModal:false
+        }
+    }
+
+
+
     markFavorite(dishId) {
         this.props.postFavorite(dishId);
     }
+    toggleModal() {
+        this.setState({showModal: !this.state.showModal});
+    }
+
+    resetForm() {
+        this.setState({
+           rating: null,
+           author:'',
+           comment: '',
+           showModal:false
+        })
+    }
+
+    handleComments=(dishId)=>{
+        this.toggleModal()
+        this.props.postComment(dishId, this.state.rating, this.state.comment, this.state.author);
+
+    }
 
     render() {
+
 
         const dishId = this.props.route.params.dishId;
         return(
@@ -85,10 +129,104 @@ class Dishdetail extends Component {
                 <RenderDish dish={this.props.dishes.dishes[+dishId]}
                     favorite={this.props.favorites.some(el => el === dishId)}
                     onPress={() => this.markFavorite(dishId)} 
+                    onToggle= {() => this.toggleModal()}
+                    
                     />
                 <RenderComments comments={this.props.comments.comments.filter((comment) => comment.dishId === dishId)} />
+                <Modal animationType = {"slide"} transparent = {false}
+                
+                        visible = {this.state.showModal}
+                        onDismiss = {() => this.toggleModal() }
+                        onRequestClose = {() => this.toggleModal() }>
+                       
+                          
+                                    <View style={styles.formRow}>
+                                        <Rating showRating fractions="{1}" startingValue="{0}" 
+                                        onFinishRating={value => this.setState({ rating: value}) }
+                                        />
+                                    </View>
+                                    <View  style={styles.formRow}>
+                                        <Input
+                                            onChangeText={value => this.setState({ author: value })}
+                                            placeholder='Author'
+                                            leftIcon={
+                                                <Icon
+                                                    name='person'
+                                                    size={24}
+                                                    color='black'
+                                                />
+                                            }
+                                        />
+                                    </View>
+                                    <View style={styles.formRow}>
+                                    <Input 
+                                        onChangeText={value => this.setState({ comment: value })}
+                                        placeholder='Comment'
+                                        leftIcon={
+                                            <Icon
+                                                name='comment'
+                                                size={24}
+                                                color='black'
+                                            />
+                                        }
+                                    />
+                                </View>
+                                <View style={styles.modal}>
+                                    <Button
+                                        color='#512DA8'
+                                        title='Submit'
+                                        onPress={() => { this.handleComments(dishId);} }
+                                    />
+                                </View>
+                                <View style={styles.modal}>
+                                    <Button
+                                        color='#808080'
+                                        title='Cancel'
+                                        onPress={() => { this.toggleModal();} }
+                                    />
+                                </View>
+                            
+                       
+                </Modal>
             </ScrollView>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    formRow: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      flex: 1,
+      flexDirection: 'row',
+      margin: 20
+    },
+    formLabel: {
+        fontSize: 18,
+        flex: 2
+    },
+    formItem: {
+        flex: 1
+    },
+    modal: {
+        justifyContent: 'center',
+        margin: 20
+     },
+     modalTitle: {
+         fontSize: 24,
+         fontWeight: 'bold',
+         backgroundColor: '#512DA8',
+         textAlign: 'center',
+         color: 'white',
+         marginBottom: 20
+     },
+     modalText: {
+         fontSize: 18,
+         margin: 10
+     },
+     rowContainer: {
+        flexDirection: 'row',
+        justifyContent:'center'
+    }
+});
 export default connect(mapStateToProps, mapDispatchToProps)(Dishdetail);
