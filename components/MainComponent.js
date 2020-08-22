@@ -66,7 +66,22 @@ function MenuNavigatorScreen() {
             <MenuNavigator.Screen
                 name="Dishdetail"
                 component={Dishdetail}
-                options={{ headerTitle: "Dish Detail"}}
+                options={
+                    ({navigation}) => ({
+                        title: 'Dish Details',
+                        headerLeft: () => (
+                            <Icon 
+                                name='arrow-left' 
+                                type='font-awesome'
+                                size={24}
+                                color='white'
+                                onPress={() => 
+                                    navigation.navigate('Menu')}
+                            />
+                        )
+                    
+                    })
+                 }
             />            
         </MenuNavigator.Navigator>
     );
