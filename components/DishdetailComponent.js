@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useRef } from 'react';
 import { Text, View, ScrollView, FlatList, StyleSheet, Button, 
     Alert,PanResponder,Modal } from 'react-native';
 import {AirbnbRating,Rating} from 'react-native-ratings'
@@ -22,8 +22,9 @@ const mapStateToProps = state => {
 });
 
 function RenderDish(props) {
-
+    const viewRef = useRef(null);
     const dish = props.dish;
+
 
     const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
         if ( dx < -200 )
@@ -36,6 +37,10 @@ function RenderDish(props) {
         onStartShouldSetPanResponder: (e, gestureState) => {
             return true;
         },
+        onPanResponderGrant: () => 
+        {viewRef.current.rubberBand(1000).then(endState => 
+            console.log(endState.finished ? 'finished' : 'cancelled'));},
+
         onPanResponderEnd: (e, gestureState) => {
             console.log("pan responder end", gestureState);
             if (recognizeDrag(gestureState))
@@ -56,7 +61,9 @@ function RenderDish(props) {
         if (dish != null) {
             return(
                 <Animatable.View useNativeDriver="true" animation="fadeInDown" duration={2000} delay={1000}
-                    {...panResponder.panHandlers}>
+                   {...panResponder.panHandlers}
+                   ref={viewRef}
+                   >
                 <Card
                 featuredTitle={dish.name}
                 image={{uri: baseUrl + dish.image}}>
