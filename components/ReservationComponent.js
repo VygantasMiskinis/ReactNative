@@ -5,6 +5,10 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Icon } from 'react-native-elements';
 import Moment from 'moment';
 import * as Animatable from 'react-native-animatable';
+import * as Permissions from 'expo-permissions';
+import { Notifications } from 'expo';
+
+
 class Reservation extends Component {
    
     constructor(props) {
@@ -49,7 +53,9 @@ class Reservation extends Component {
                     },
                     {
                         text: 'OK',
-                        onPress: () => this.clearForm()
+                        onPress: () =>{ 
+                            this.presentLocalNotification(this.state.date)
+                            this.clearForm()}
                     }
                 ],
                 { cancelable: false }
@@ -67,11 +73,75 @@ class Reservation extends Component {
             mode: 'date'
         });
     }
+
+    async obtainNotificationPermission() {
+
+        let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS);
+        
+        if (permission.status !== 'granted') {
+        
+        permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
+        
+        if (permission.status !== 'granted') {
+        
+        Alert.alert('Permission not granted to show notifications');
+        
+        }
+        
+        } else {
+        
+        if (Platform.OS === 'android') {
+        
+        Notifications.createChannelAndroidAsync('notify', {
+        
+        name: 'notify',
+        
+        sound: true,
+        
+        vibrate: true,
+        
+        });
+        
+        }
+        
+        }
+        
+        return permission;
+        
+        }
+
+        async presentLocalNotification(date) {
+
+            await this.obtainNotificationPermission();
+            
+            Notifications.presentLocalNotificationAsync({
+            
+            title: 'Your Reservation',
+            
+            body: 'Reservation for '+ date + ' requested',
+            
+            ios: {
+            
+            sound: true
+            
+            },
+            
+            android: {
+            
+            "channelId": "notify",
+            
+            color: '#512DA8'
+            
+            }
+            
+            });
+            
+            }
     
     render() {
         return(
             <ScrollView>
-                <Animatable.View useNativeDriver="true" animation="zoomIn" duration={2000}>
+                <Animatable.View useNativeDriver={true} animation="zoomIn" duration={2000}>
                 <View style={styles.formRow}>
                 <Text style={styles.formLabel}>Number of Guests</Text>
                 <Picker

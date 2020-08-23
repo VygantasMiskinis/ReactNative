@@ -61,6 +61,7 @@ class Home extends Component {
 
     animate () {
         this.animatedValue.setValue(0)
+        
         Animated.timing(
           this.animatedValue,
           {
@@ -87,19 +88,19 @@ class Home extends Component {
 
         return(
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-            <Animated.View  style={{ width: '100%', transform: [{translateX: xpos1}]}}>
+            <Animated.View useNativeDriver="true" style={{ width: '100%', transform: [{translateX: xpos1}]}}>
                 <RenderItem item={this.props.dishes.dishes.filter((dish) => dish.featured)[0]}
                     isLoading={this.props.dishes.isLoading}
                     erreMess={this.props.dishes.erreMess} 
                     />
             </Animated.View>
-            <Animated.View  style={{ width: '100%',  transform: [{translateX: xpos2}]}}>
+            <Animated.View useNativeDriver="true"  style={{ width: '100%',  transform: [{translateX: xpos2}]}}>
                 <RenderItem item={this.props.promotions.promotions.filter((promo) => promo.featured)[0]}
                     isLoading={this.props.promotions.isLoading}
                     erreMess={this.props.promotions.erreMess} 
                     />
             </Animated.View>
-            <Animated.View  style={{ width: '100%',  transform: [{translateX: xpos3}]}}>
+            <Animated.View useNativeDriver="true"  style={{ width: '100%',  transform: [{translateX: xpos3}]}}>
                 <RenderItem item={this.props.leaders.leaders.filter((leader) => leader.featured)[0]}
                     isLoading={this.props.leaders.isLoading}
                     erreMess={this.props.leaders.erreMess} 

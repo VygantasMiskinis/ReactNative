@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
 import Reservation from './ReservationComponent';
 import Favorites from './FavoritesComponent';
-
+import Login from './LoginComponent';
 
 const mapStateToProps = state => {
     return {
@@ -123,6 +123,45 @@ function AboutNavigatorScreen() {
                  }
             />            
         </AboutNavigator.Navigator>
+    );
+}
+
+const LoginNavigator = createStackNavigator();
+
+function LoginNavigatorScreen() {
+    return(
+        <LoginNavigator.Navigator
+            initialRouteName='Login'
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: "#512DA8"
+                },
+                headerTintColor: "#fff",
+                headerTitleStyle: {
+                    color: "#fff"            
+                }
+            }}
+        >
+            <LoginNavigator.Screen
+                name="Login"
+                component={Login}
+                options={
+                    ({navigation}) => ({
+                        title:'Login',
+                        headerLeft: () => (
+                            <Icon 
+                                name='menu' 
+                                size={24}
+                                color='white'
+                                onPress={() => 
+                                    navigation.toggleDrawer()}
+                            />
+                        )
+                    
+                    })
+                 }
+            />            
+        </LoginNavigator.Navigator>
     );
 }
 
@@ -328,6 +367,23 @@ function MainNavigatorScreen() {
                 )
             }
             }/>
+            
+        <MainNavigator.Screen name='Login' component={LoginNavigatorScreen}  
+        options={{ headerTitle: "Login"}, {
+            label: "Login"},
+            {
+                drawerIcon: ({tintColor}) => (
+                    <Icon
+                        name='sign-in'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor}
+                    />
+                )
+            }
+            }/>
+            
+
         <MainNavigator.Screen name='Menu' component={MenuNavigatorScreen} options={{ headerTitle: "Menu"}, 
         {label: "Menu"},
             {
