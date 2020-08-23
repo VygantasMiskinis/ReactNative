@@ -1,32 +1,51 @@
 import React, {Component} from 'react';
-import { Card } from 'react-native-elements';
+import { Card, Button, Icon } from 'react-native-elements';
 import { Text, View} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { ScrollView } from 'react-native-gesture-handler';
-function Contact (){
+import * as MailComposer from 'expo-mail-composer';
 
-return(
-<ScrollView>
-<Animatable.View useNativeDriver="true" animation="fadeInDown" duration={2000} delay={1000}>
-    <Card
-    title="Contact Information">
-        <Text>     
-        {`121, Clear Water Bay Road
+class  Contact extends Component {
 
-        Clear Water Bay, Kowloon~
+    sendMail() {
+        MailComposer.composeAsync({
+            recipients: ['confusion@food.net'],
+            subject: 'Enquiry',
+            body: 'To whom it may concern:'
+        })
+    }
+    
 
-        HONG KONG
+render(){
+    return(
+                <ScrollView>
+                <Animatable.View useNativeDriver="true" animation="fadeInDown" duration={2000} delay={1000}>
+                    <Card
+                    title="Contact Information">
+                        <Text style={{margin: 10}}>121, Clear Water Bay Road</Text>
+                        
+                        <Text style={{margin: 10}}>Clear Water Bay, Kowloon</Text>
 
-        Tel: +852 1234 5678
+                        <Text style={{margin: 10}}>HONG KONG</Text>
 
-        Fax: +852 8765 4321
+                        <Text style={{margin: 10}}>Tel: +852 1234 5678</Text>
 
-        Email:confusion@food.net`}
-        </Text>
-    </Card>
-</Animatable.View>
-</ScrollView>
-);
+                        <Text style={{margin: 10}}>Fax: +852 8765 4321</Text>
+
+                        <Text style={{margin: 10}}>Email:confusion@food.net </Text>
+                       
+                        <Button
+                        title="Send Email"
+                        buttonStyle={{backgroundColor: "#512DA8"}}
+                        icon={<Icon name='envelope-o' type='font-awesome' color='white' />}
+                        onPress={this.sendMail}
+                        />
+                    </Card>
+                </Animatable.View>
+                </ScrollView>
+            );
+
+        }
 
 }
 
